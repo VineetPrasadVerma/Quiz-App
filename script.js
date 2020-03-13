@@ -3,6 +3,10 @@ const nextButton = document.getElementById('next-btn')
 const questionContainerElement = document.getElementById('question-container')
 const questionElement = document.getElementById('question')
 const answerButtonElement = document.getElementById('answer-button')
+const currentScoreElement = document.getElementById('score')
+const highScoreElement = document.getElementById('highScore')
+let currentScore = 0
+const ls = window.localStorage
 
 let shuffledQuestion = []
 let currentQuestionIndex
@@ -15,8 +19,13 @@ nextButton.addEventListener('click', () => {
 
 function startGame () {
   // console.log('test')
-
+  currentScoreElement.innerText = 'score: ' + currentScore
+  saveHighScore(currentScore)
+  // console.log(typeof highScore)
+  // localStorage.setItem('highScore', JSON.stringify(currentScore))
+  // highScoreElement.innerText = highScore
   startButton.classList.add('hide')
+  currentScoreElement.classList.remove('hide')
   shuffledQuestion = questions.sort(() => Math.random() - 0.5)
   currentQuestionIndex = 0
   questionContainerElement.classList.remove('hide')
@@ -35,6 +44,7 @@ function resetState () {
     answerButtonElement.removeChild(answerButtonElement.firstChild)
   }
 }
+
 // dataset property provides read and write acces to custom data attributes
 function showQuestion (question) {
   questionElement.innerText = question.question
@@ -43,7 +53,9 @@ function showQuestion (question) {
     button.innerText = ans.text
     button.classList.add('btn')
     if (ans.correct) {
+      // console.log(ans)
       button.dataset.correct = ans
+      // console.log(button.dataset.correct)
     }
     button.addEventListener('click', selectAnswer)
     answerButtonElement.appendChild(button)
@@ -53,28 +65,53 @@ function showQuestion (question) {
 function selectAnswer (e) {
   const selectedButton = e.target
   const correct = selectedButton.dataset.correct
-  // if(correct){
-  //     selectedButton.classList.add()
+  // console.log(JSON.stringify({ val: selectedButton.dataset.correct }, 'vineet'))
+  // if (correct) {
+  //   selectedButton.classList.add()
   // }
+
   setStatusClass(document.body, correct)
-  Array.from(answerButtonElement.children).forEach(button => {
-    setStatusClass(button, button.dataset.correct)
-  })
+  // Array.from(answerButtonElement.children).forEach(button => {
+  //   setStatusClass(button, button.dataset.correct)
+  // })
+  // console.log(selectedButton.nodeName)
+  setStatusClass(selectedButton, selectedButton.dataset.correct)
   if (shuffledQuestion.length > currentQuestionIndex + 1) {
     nextButton.classList.remove('hide')
   } else {
     startButton.innerText = 'Restart'
     startButton.classList.remove('hide')
+    currentScore = 0
   }
 }
 
 function setStatusClass (element, correct) {
   clearStatusClass(element)
   if (correct) {
+    if (element.nodeName === 'BUTTON') {
+      currentScore += 1
+      currentScoreElement.innerText = 'score: ' + currentScore
+    }
     element.classList.add('correct')
   } else {
     element.classList.add('wrong')
   }
+  saveHighScore(currentScore)
+}
+
+function saveHighScore (currentScore) {
+  if (!ls.getItem('highScore')) {
+    ls.setItem('highScore', '0')
+  }
+  const highScore = JSON.parse(ls.getItem('highScore'))
+  // console.log(highScore, currentScore)
+  if (highScore < currentScore) {
+    ls.setItem('highScore', JSON.stringify(currentScore))
+    // console.log(JSON.parse(ls.getItem('highScore')))
+    highScoreElement.innerText = 'High Score: ' + JSON.parse(ls.getItem('highScore'))
+  }
+
+  highScoreElement.innerText = 'High Score: ' + JSON.parse(ls.getItem('highScore'))
 }
 
 function clearStatusClass (element) {
@@ -111,7 +148,7 @@ const questions = [
     ]
   },
   {
-    question: 'Which of the following function of Array object creates a new array with all of the \n elements of this array for which the provided filtering function returns true?',
+    question: 'Which of the following function of Array object creates a new array with all of the elements of this array for which the provided filtering function returns true?',
     answers: [
       { text: 'concat', correct: false },
       { text: 'every', correct: false },
@@ -129,3 +166,7 @@ const questions = [
     ]
   }
 ]
+
+// local storage
+
+// console.log(JSON.parse(localStorage.getItem('highScore')))
