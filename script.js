@@ -19,7 +19,7 @@ nextButton.addEventListener('click', () => {
 
 function startGame () {
   // console.log('test')
-  currentScoreElement.innerText = 'score: ' + currentScore
+  currentScoreElement.innerText = `score: ${currentScore}` // STRING LITERALS
   saveHighScore(currentScore)
   // console.log(typeof highScore)
   // localStorage.setItem('highScore', JSON.stringify(currentScore))
@@ -27,6 +27,7 @@ function startGame () {
   startButton.classList.add('hide')
   currentScoreElement.classList.remove('hide')
   shuffledQuestion = questions.sort(() => Math.random() - 0.5)
+  // console.log(shuffledQuestion)
   currentQuestionIndex = 0
   questionContainerElement.classList.remove('hide')
   setNextQuestions()
@@ -90,7 +91,7 @@ function setStatusClass (element, correct) {
   if (correct) {
     if (element.nodeName === 'BUTTON') {
       currentScore += 1
-      currentScoreElement.innerText = 'score: ' + currentScore
+      currentScoreElement.innerText = `score: ${currentScore}`
     }
     element.classList.add('correct')
   } else {
@@ -108,10 +109,10 @@ function saveHighScore (currentScore) {
   if (highScore < currentScore) {
     ls.setItem('highScore', JSON.stringify(currentScore))
     // console.log(JSON.parse(ls.getItem('highScore')))
-    highScoreElement.innerText = 'High Score: ' + JSON.parse(ls.getItem('highScore'))
+    highScoreElement.innerText = `High Score:  ${JSON.parse(ls.getItem('highScore'))}`
   }
 
-  highScoreElement.innerText = 'High Score: ' + JSON.parse(ls.getItem('highScore'))
+  highScoreElement.innerText = `High Score:  ${JSON.parse(ls.getItem('highScore'))}`
 }
 
 function clearStatusClass (element) {
